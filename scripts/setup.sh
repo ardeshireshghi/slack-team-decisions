@@ -6,6 +6,7 @@ python3 -m venv venv
 source ./venv/bin/activate
 
 # Install serverless plugin dependencies
+npm i -g serverless
 yarn install
 
 pip install --upgrade pip

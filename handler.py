@@ -52,8 +52,8 @@ def create_decision(decision_message):
     return response
 
 
-def list_decisions():
-    decisions = search_slack(DECISION_IDENTIFIER)
+def list_decisions(channel_name):
+    decisions = search_slack(f"in:#{channel_name} {DECISION_IDENTIFIER}")
     return decision_messages_with_formatting(decisions)
 
 
@@ -78,9 +78,11 @@ def decision_handler(event, context):
             command = DecisionCommands.Create
 
         if command == DecisionCommands.Create:
-            return create_decision()
+            return create_decision(decision_message)
         elif command == DecisionCommands.List:
-            return list_decisions()
+            channel_name = parsed_body.get('channel_name')
+
+            return list_decisions(channel_name)
         else:
             raise Exception('command not supported')
     except Exception as e:
