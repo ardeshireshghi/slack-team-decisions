@@ -1,0 +1,13 @@
+{
+  "name": "team-decisions",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Ardeshir Eshghi <ardi.eshghi@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "serverless-python-requirements": "^5.4.0"
+  },
+  "devDependencies": {
+    "serverless-offline": "^8.5.0"
+  }
+}
