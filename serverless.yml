@@ -25,9 +25,14 @@ provider:
   runtime: python3.8
   memorySize: 512
   timeout: 10
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource: "arn:aws:s3:::${env:DECISIONS_S3_BUCKET}/*"
 
   # you can overwrite defaults here
-  stage: dev
+  stage: ${opt:stage, 'dev'}
   region: eu-west-2
 
 # you can add statements to the Lambda function's IAM Role here
@@ -111,6 +116,7 @@ functions:
       SLACK_BOT_AUTH_TOKEN: ${env:SLACK_BOT_AUTH_TOKEN}
       SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
       SLACK_CLIENT_SECRET: ${env:SLACK_CLIENT_SECRET}
+      DECISIONS_S3_BUCKET: ${env:DECISIONS_S3_BUCKET}
 
 plugins:
   - serverless-python-requirements
@@ -119,14 +125,11 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: true
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+
+resources:
+  Resources:
+    DecisionsDataStorage:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: Private
+        BucketName: ${env:DECISIONS_S3_BUCKET}
