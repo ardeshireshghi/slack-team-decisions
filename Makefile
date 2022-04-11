@@ -12,7 +12,7 @@ run:
 	sls	offline	start
 
 deploy:
-	sls	deploy
+	sls	deploy --stage dev --aws-s3-accelerate
 
 decision_logs:
 	sls logs -t --function decision_handler

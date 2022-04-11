@@ -9,5 +9,8 @@ source ./venv/bin/activate
 npm i -g serverless
 yarn install
 
+echo "Creating .env file"
+cp .env{.example,}
+
 pip install --upgrade pip
 pip install -r requirements.txt

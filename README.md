@@ -20,9 +20,13 @@ Use `make setup` to install dependencies and setup Python virtual env. Then use 
 
 ### Deploy to AWS
 
-Make sure AWS is configured and IAM user has necessary permissions to create Cloudformation stack as well as Lambda functions and AWS API Gateway. Run `make deploy` to deploy to AWS:
+Make sure AWS is configured and IAM user has necessary permissions to create Cloudformation stack as well as Lambda functions and AWS API Gateway. Run:
 
-The deployment creates to endpoints and functions:
+```sh
+$ make deploy
+```
+
+The deployment creates 2 API endpoints with below function names:
 
 ```
 decision_handler
