@@ -15,10 +15,10 @@ deploy:
 	sls	deploy --stage dev --aws-s3-accelerate
 
 decision_logs:
-	sls logs -t --function decision_handler
+	sls logs -t --startTime 30m --function decision_handler
 
 oauth_logs:
-	sls logs -t --function oauth_handler
+	sls logs -t --startTime 30m --function oauth_handler
 
 clean:
 	rm	-rf	__pycache__
