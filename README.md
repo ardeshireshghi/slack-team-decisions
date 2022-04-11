@@ -4,7 +4,7 @@ This is a simple Slack application built using serverless framework in AWS writt
 
 ## About the project
 
-This simple Python serverless app is aimed to solve the problem of teaming making decisions in Slack and are not able to easily find and use those decisions. It makes use of Slack search API and command to create decision messages and also be able to get a list of those messages sorted.
+This simple Python serverless app is aimed to solve the problem of teams making decisions in Slack and are not able to easily find and use those decisions. It makes use of Slack search API and command to create decision messages and also be able to get a list of those messages sorted.
 
 ### Built with
 
