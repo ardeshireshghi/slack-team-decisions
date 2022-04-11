@@ -33,10 +33,10 @@ class SlackDecisionMessagesPresenter:
                     }
                 },
                 {
-                    "type": "section",
+                    "type": "header",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "Message and the *link*"
+                        "text": "Message details"
                     },
                     "fields": [{
                         "type": "mrkdwn",
