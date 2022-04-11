@@ -1,4 +1,4 @@
-.PHONY:	setup	run	clean
+.PHONY:	setup run clean deploy decision_logs oauth_logs
 
 VENV	=	venv
 PYTHON	=	$(VENV)/bin/python3
@@ -13,6 +13,12 @@ run:
 
 deploy:
 	sls	deploy
+
+decision_logs:
+	sls logs -t --function decision_handler
+
+oauth_logs:
+	sls logs -t --function oauth_handler
 
 clean:
 	rm	-rf	__pycache__
