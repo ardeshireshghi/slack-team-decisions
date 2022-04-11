@@ -2,7 +2,8 @@ import os
 import json
 from urllib.parse import parse_qs
 from decisions_app.interface_adapters.presenters.slack_decisions_presenter import SlackDecisionMessagesPresenter
-from decisions_app.frameworks.slack_api import access_token_from_code, search as search_slack
+from decisions_app.frameworks.slack_api import access_token_from_code, post_message, search as search_slack
+from decisions_app.frameworks.database.access_token_repo import AccessTokenRepository
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -11,10 +12,44 @@ load_dotenv()
 SLACK_REQUEST_VERIFY_TOKEN = os.environ["SLACK_TOKEN"]
 DECISION_IDENTIFIER = "[Decision Record]"
 
+access_token_repo = AccessTokenRepository()
+
 
 class DecisionCommands:
     List = 'list'
     Create = 'create'
+
+
+def get_join_app_html():
+    return """
+            <DOCTYPE html>
+            <html>
+                <head>
+                    <title>Slack decisions app</title>
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <meta charset="UTF-8">
+                    <style>
+                        body {
+                            padding: 0;
+                            margin: 0;
+                            font-family: sans-serif;
+                        }
+
+                        .page {
+                            height: 100vh;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="page">
+                        <h1>👍 Thanks for choosing "Team decisions" on Slack</h1>
+                    </div>
+                </body>
+            </html>
+        """
 
 
 def parse_body(raw_body):
@@ -97,12 +132,32 @@ def oauth_handler(event, context):
     oauth_code = event.get('queryStringParameters').get('code')
     response = access_token_from_code(oauth_code)
 
-    # TODO: Store team-id (response.team.id)/user-id(response.authed_user.id)/token in S3
-    # We then need to read the value from S3 on the decision_handler calls and pass it to
-    # search_slack call
+    bot_access_token = response.get('access_token')
+    access_token = response.get('authed_user').get('access_token')
+    team_id = response.get('team').get('id')
+    user_id = response.get('authed_user').get('id')
+    bot_user_id = response.get('bot_user_id')
+
+    access_token_repo.save_token(
+        access_token=access_token, user_id=user_id, team_id=team_id)
+
+    message = f"""
+    :wave: Hello <@{user_id}>! Thanks for choosing Slack's  "Team Decisions" application. We are going to help you with making and managing decisions: Here is how you use decisions:
+
+
+    • ```/decision I made a great decision and I like to keep it```
+    • ```/decision```  This will show you all the decisions made
+    """
+
+    response = post_message(channel_id=user_id,
+                            access_token=bot_access_token, message=message)
+
+    print('posted message to slack', response)
+
     return {
         "statusCode": 200,
-        "body": json.dumps({
-            "accessToken": response.get('authed_user').get('access_token')
-        })
+        "headers": {
+            "Content-Type": "text/html",
+        },
+        "body": get_join_app_html()
     }

@@ -41,3 +41,15 @@ def access_token_from_code(code):
             print(
                 f"Error exchanging OAuth code with access token: {e.response['error']}")
             raise e
+
+
+def post_message(access_token, channel_id, message):
+    try:
+        response = client.chat_postMessage(
+            token=access_token, channel=channel_id, text=message, mrkdwn=True)
+        return response
+    except SlackApiError as e:
+        if e.response["ok"] is False:
+            print(
+                f"Error posting message with Slack: {e.response['error']}")
+            raise e
