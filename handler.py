@@ -2,7 +2,7 @@ import os
 import json
 from urllib.parse import parse_qs
 from decisions_app.interface_adapters.presenters.slack_decisions_presenter import SlackDecisionMessagesPresenter
-from decisions_app.frameworks.slack_api import search as search_slack
+from decisions_app.frameworks.slack_api import access_token_from_code, search as search_slack
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -91,3 +91,18 @@ def decision_handler(event, context):
             "statusCode": 500,
             "body": "Error handling decision command. please see logs"
         }
+
+
+def oauth_handler(event, context):
+    oauth_code = event.get('queryStringParameters').get('code')
+    response = access_token_from_code(oauth_code)
+
+    # TODO: Store team-id (response.team.id)/user-id(response.authed_user.id)/token in S3
+    # We then need to read the value from S3 on the decision_handler calls and pass it to
+    # search_slack call
+    return {
+        "statusCode": 200,
+        "body": json.dumps({
+            "accessToken": response.get('authed_user').get('access_token')
+        })
+    }
