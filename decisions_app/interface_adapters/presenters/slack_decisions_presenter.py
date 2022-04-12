@@ -16,7 +16,7 @@ class SlackDecisionMessagesPresenter:
                 "type": "header",
                 "text": {
                     "type": "plain_text",
-                    "text": f"Team Decisions (Total: {self.message_count})",
+                    "text": f"Total team Decisions: {self.message_count}",
                     "emoji": True
                 }
             }]
@@ -33,10 +33,10 @@ class SlackDecisionMessagesPresenter:
                     }
                 },
                 {
-                    "type": "header",
+                    "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "Message details"
+                        "text": "*Message details*"
                     },
                     "fields": [{
                         "type": "mrkdwn",
