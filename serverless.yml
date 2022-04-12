@@ -128,6 +128,7 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: false
+    pythonBin: python3
 
 resources:
   Resources:
