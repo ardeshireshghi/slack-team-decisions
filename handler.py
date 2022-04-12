@@ -5,7 +5,7 @@ import hmac
 import hashlib
 from urllib.parse import parse_qs
 from decisions_app.interface_adapters.presenters.slack_decisions_presenter import SlackDecisionMessagesPresenter
-from decisions_app.frameworks.slack_api import access_token_from_code, post_message, search as search_slack
+from decisions_app.frameworks.slack_api import access_token_from_code, post_message, get_user_by_id, search as search_slack
 from decisions_app.frameworks.database.access_token_repo import AccessTokenRepository
 from decisions_app.frameworks.ui.joined_page import get_join_app_html
 from dotenv import load_dotenv
@@ -152,6 +152,9 @@ def oauth_handler(event, context):
     access_token_repo.save_token(
         type="bot", access_token=bot_access_token, user_id=user_id, team_id=team_id)
 
+    user = get_user_by_id(user_id=user_id, access_token=bot_access_token)
+    user_name = user.get('real_name')
+
     # Send welcome message to slack
     send_welcome_message_to_slack(
         user_id=user_id, bot_access_token=bot_access_token)
@@ -161,5 +164,5 @@ def oauth_handler(event, context):
         "headers": {
             "Content-Type": "text/html",
         },
-        "body": get_join_app_html()
+        "body": get_join_app_html(user_name)
     }

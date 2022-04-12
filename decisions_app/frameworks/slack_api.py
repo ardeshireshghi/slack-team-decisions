@@ -53,3 +53,19 @@ def post_message(access_token, channel_id, message):
             print(
                 f"Error posting message with Slack: {e.response['error']}")
             raise e
+
+
+def get_user_by_id(user_id, access_token):
+    try:
+        # Call the users.info method using the WebClient
+        response = client.users_info(
+            user=user_id,
+            token=access_token
+        )
+        return response.get('user')
+
+    except SlackApiError as e:
+        if e.response["ok"] is False:
+            print(
+                f"Error fetching user: {e.response['error']}")
+            raise e

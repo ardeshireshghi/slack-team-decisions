@@ -1,5 +1,5 @@
-def get_join_app_html():
-    return """
+def get_join_app_html(user_name):
+    return f"""
             <DOCTYPE html>
             <html>
                 <head>
@@ -7,23 +7,23 @@ def get_join_app_html():
                     <meta name="viewport" content="width=device-width, initial-scale=1">
                     <meta charset="UTF-8">
                     <style>
-                        body {
+                        body {{
                             padding: 0;
                             margin: 0;
                             font-family: sans-serif;
-                        }
+                        }}
 
-                        .page {
+                        .page {{
                             height: 100vh;
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                        }
+                        }}
                     </style>
                 </head>
                 <body>
                     <div class="page">
-                        <h1>👍 Thanks for choosing "Team decisions" on Slack</h1>
+                        <h1>👍 Thanks "{user_name}" for choosing "Team decisions" on Slack</h1>
                     </div>
                 </body>
             </html>
