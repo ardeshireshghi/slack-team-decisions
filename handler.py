@@ -89,8 +89,8 @@ def send_welcome_message_to_slack(user_id, bot_access_token):
     :wave: Hello <@{user_id}>! Thanks for choosing Slack's  "Team Decisions" application. We are going to help you with making and managing decisions: Here is how you use decisions:
 
 
-     ```/decision I made a great decision and I like to keep it```
-     ```/decision```  This will show you all the decisions made
+     `/decision I made a great decision and I like to keep it`
+     `/decision` This will show you all the decisions made
     """
 
     post_message(channel_id=user_id,
