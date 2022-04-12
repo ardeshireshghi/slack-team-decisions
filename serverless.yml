@@ -35,8 +35,6 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: eu-west-2
   environment:
-    SLACK_TOKEN: ${env:SLACK_TOKEN}
-    SLACK_BOT_AUTH_TOKEN: ${env:SLACK_BOT_AUTH_TOKEN}
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
     SLACK_CLIENT_SECRET: ${env:SLACK_CLIENT_SECRET}
     DECISIONS_S3_BUCKET: ${env:DECISIONS_S3_BUCKET}
