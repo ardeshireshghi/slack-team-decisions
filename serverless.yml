@@ -41,6 +41,7 @@ provider:
   environment:
     SLACK_CLIENT_ID: ${env:SLACK_CLIENT_ID}
     SLACK_CLIENT_SECRET: ${env:SLACK_CLIENT_SECRET}
+    SLACK_SIGNING_SECRET: ${env:SLACK_SIGNING_SECRET}
     DECISIONS_S3_BUCKET: ${env:DECISIONS_S3_BUCKET}
 
 # you can add statements to the Lambda function's IAM Role here

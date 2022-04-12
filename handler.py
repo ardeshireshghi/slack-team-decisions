@@ -1,5 +1,8 @@
+from base64 import b64decode
 import os
 import json
+import hmac
+import hashlib
 from urllib.parse import parse_qs
 from decisions_app.interface_adapters.presenters.slack_decisions_presenter import SlackDecisionMessagesPresenter
 from decisions_app.frameworks.slack_api import access_token_from_code, post_message, search as search_slack
@@ -11,7 +14,7 @@ load_dotenv()
 
 
 DECISION_IDENTIFIER = "[Decision Record]"
-
+SLACK_SIGNING_SECRET = os.environ["SLACK_SIGNING_SECRET"]
 access_token_repo = AccessTokenRepository()
 
 
@@ -20,8 +23,18 @@ class DecisionCommands:
     Create = 'create'
 
 
-def parse_body(raw_body):
-    parsed_body = parse_qs(raw_body)
+def verify_slack_request(base64_encoded_body, timestamp, slack_req_signature):
+    request_body = b64decode(base64_encoded_body).decode("utf-8")
+    sig_basestring = f"v0:{timestamp}:{request_body}"
+    msg = bytes(sig_basestring, 'latin-1')
+    signature = 'v0=' + hmac.new(bytes(SLACK_SIGNING_SECRET, 'latin-1'),
+                                 msg=msg, digestmod=hashlib.sha256).hexdigest()
+    return hmac.compare_digest(signature, slack_req_signature)
+
+
+def parse_body(base64_encoded_body):
+    decoded_base64_body = b64decode(base64_encoded_body).decode("utf-8")
+    parsed_body = parse_qs(decoded_base64_body)
 
     # parse_qs puts all values in a list so we fix that
     parsed_body = {key: value[0] for key, value in parsed_body.items()}
@@ -33,6 +46,9 @@ def decision_messages_with_formatting(decisions):
     response_body = presenter.format()
     response = {
         "statusCode": 200,
+        "headers": {
+            "content-type": "application/json"
+        },
         "body": json.dumps(response_body)
     }
 
@@ -49,6 +65,9 @@ def create_decision(decision_message):
     }
     response = {
         "statusCode": 200,
+        "headers": {
+            "content-type": "application/json"
+        },
         "body": json.dumps(response_body)
     }
 
@@ -61,7 +80,7 @@ def list_decisions(channel_name, user_id, team_id):
 
     decisions = search_slack(
         f"in:#{channel_name} {DECISION_IDENTIFIER}", access_token=token)
-    print('decisions', decisions)
+
     return decision_messages_with_formatting(decisions)
 
 
@@ -80,7 +99,16 @@ def send_welcome_message_to_slack(user_id, bot_access_token):
 
 def decision_handler(event, context):
     body = event.get('body')
-    parsed_body = parse_body(raw_body=body)
+    parsed_body = parse_body(base64_encoded_body=body)
+    request_timestamp = event.get('headers').get('x-slack-request-timestamp')
+    request_signature = event.get('headers').get('x-slack-signature')
+
+    if not verify_slack_request(base64_encoded_body=body, timestamp=request_timestamp, slack_req_signature=request_signature):
+        print('Request verification failed')
+        return {
+            "statusCode": 401,
+            "body": "Cannot verify request signature"
+        }
 
     decision_message = parsed_body.get('text')
 
