@@ -66,6 +66,19 @@ def list_decisions(channel_name, user_id, team_id):
     return decision_messages_with_formatting(decisions)
 
 
+def send_welcome_message_to_slack(user_id, bot_access_token):
+    message = f"""
+    :wave: Hello <@{user_id}>! Thanks for choosing Slack's  "Team Decisions" application. We are going to help you with making and managing decisions: Here is how you use decisions:
+
+
+     ```/decision I made a great decision and I like to keep it```
+     ```/decision```  This will show you all the decisions made
+    """
+
+    post_message(channel_id=user_id,
+                 access_token=bot_access_token, message=message)
+
+
 def decision_handler(event, context):
     body = event.get('body')
     parsed_body = parse_body(raw_body=body)
@@ -105,23 +118,15 @@ def oauth_handler(event, context):
     team_id = response.get('team').get('id')
     user_id = response.get('authed_user').get('id')
 
+    # Save user token and bot token on S3
     access_token_repo.save_token(
         type="user", access_token=user_access_token, user_id=user_id, team_id=team_id)
     access_token_repo.save_token(
         type="bot", access_token=bot_access_token, user_id=user_id, team_id=team_id)
 
-    message = f"""
-    :wave: Hello <@{user_id}>! Thanks for choosing Slack's  "Team Decisions" application. We are going to help you with making and managing decisions: Here is how you use decisions:
-
-
-     ```/decision I made a great decision and I like to keep it```
-     ```/decision```  This will show you all the decisions made
-    """
-
-    response = post_message(channel_id=user_id,
-                            access_token=bot_access_token, message=message)
-
-    print('posted message to slack', response)
+    # Send welcome message to slack
+    send_welcome_message_to_slack(
+        user_id=user_id, bot_access_token=bot_access_token)
 
     return {
         "statusCode": 200,
