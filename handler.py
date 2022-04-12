@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-SLACK_REQUEST_VERIFY_TOKEN = os.environ["SLACK_TOKEN"]
 DECISION_IDENTIFIER = "[Decision Record]"
 
 access_token_repo = AccessTokenRepository()
