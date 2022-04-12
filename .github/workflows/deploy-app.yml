@@ -23,7 +23,7 @@ jobs:
       - name: Serverless Deploy
         uses: dhollerbach/actions.serverless-with-python-requirements@master
         with:
-          args: "--stage dev --aws-s3-accelerate" # any deploy arguments you want to pass
+          args: "" # any deploy arguments you want to pass
         env:
           SLACK_CLIENT_ID: ${{ secrets.SLACK_CLIENT_ID }}
           SLACK_CLIENT_SECRET: ${{ secrets.SLACK_CLIENT_SECRET }}
