@@ -9,20 +9,21 @@ jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Set up Node
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: yarn install
-      - name: serverless deploy
-        uses: serverless/github-action@v3
+          node-version: 16
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          args: deploy --stage dev --aws-s3-accelerate
+          python-version: 3.8 # Update with your python version
+
+      - name: Serverless Deploy
+        uses: dhollerbach/actions.serverless-with-python-requirements@master
+        with:
+          args: "--stage dev --aws-s3-accelerate" # any deploy arguments you want to pass
         env:
           SLACK_CLIENT_ID: ${{ secrets.SLACK_CLIENT_ID }}
           SLACK_CLIENT_SECRET: ${{ secrets.SLACK_CLIENT_SECRET }}
