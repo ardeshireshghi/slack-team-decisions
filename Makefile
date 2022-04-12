@@ -3,22 +3,23 @@
 VENV	=	venv
 PYTHON	=	$(VENV)/bin/python3
 PIP	=	$(VENV)/bin/pip
+DEPLOY_ENV	=	dev
 
 setup:
 	./scripts/setup.sh
 
 run:
 	.	$(VENV)/bin/activate
-	sls	offline	start
+	sls	offline	--stage $(DEPLOY_ENV) start
 
 deploy:
-	sls	deploy --stage dev --aws-s3-accelerate
+	sls	deploy --stage $(DEPLOY_ENV) --aws-s3-accelerate
 
 decision_logs:
-	sls logs -t --startTime 30m --function decision_handler
+	sls logs --stage $(DEPLOY_ENV) -t --startTime 30m --function decision_handler
 
 oauth_logs:
-	sls logs -t --startTime 30m --function oauth_handler
+	sls logs --stage $(DEPLOY_ENV) -t --startTime 30m --function oauth_handler
 
 clean:
 	rm	-rf	__pycache__
