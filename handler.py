@@ -15,6 +15,7 @@ load_dotenv()
 
 DECISION_IDENTIFIER = "[Decision Record]"
 SLACK_SIGNING_SECRET = os.environ["SLACK_SIGNING_SECRET"]
+
 access_token_repo = AccessTokenRepository()
 
 
