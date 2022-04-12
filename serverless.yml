@@ -30,6 +30,10 @@ provider:
       Action:
         - s3:*
       Resource: "arn:aws:s3:::${env:DECISIONS_S3_BUCKET}/*"
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource: "arn:aws:s3:::${env:DECISIONS_S3_BUCKET}"
 
   # you can overwrite defaults here
   stage: ${opt:stage, 'dev'}
