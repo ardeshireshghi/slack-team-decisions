@@ -9,13 +9,13 @@ load_dotenv()
 SLACK_CLIENT_ID = os.environ['SLACK_CLIENT_ID']
 SLACK_CLIENT_SECRET = os.environ['SLACK_CLIENT_SECRET']
 
-client = WebClient(token=os.environ['SLACK_BOT_AUTH_TOKEN'])
+client = WebClient()
 
 
-def search(keyword):
+def search(keyword, access_token):
     try:
         response = client.search_messages(
-            query=keyword, count=1000, sort="timestamp", sort_dir="desc")
+            query=keyword, count=1000, sort="timestamp", sort_dir="desc", token=access_token)
 
         messages = response.get('messages')
         if messages:

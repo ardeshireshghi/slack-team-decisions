@@ -87,22 +87,19 @@ def create_decision(decision_message):
     return response
 
 
-def list_decisions(channel_name):
-    decisions = search_slack(f"in:#{channel_name} {DECISION_IDENTIFIER}")
+def list_decisions(channel_name, user_id, team_id):
+    token = access_token_repo.get_token(
+        team_id=team_id, type="user", user_id=user_id)
+
+    decisions = search_slack(
+        f"in:#{channel_name} {DECISION_IDENTIFIER}", access_token=token)
+    print('decisions', decisions)
     return decision_messages_with_formatting(decisions)
 
 
 def decision_handler(event, context):
     body = event.get('body')
     parsed_body = parse_body(raw_body=body)
-    slack_token = parsed_body.get('token')
-
-    # Validate slack token
-    if slack_token != SLACK_REQUEST_VERIFY_TOKEN:
-        return {
-            "statusCode": 401,
-            "body": "Not Authorized"
-        }
 
     decision_message = parsed_body.get('text')
 
@@ -116,8 +113,10 @@ def decision_handler(event, context):
             return create_decision(decision_message)
         elif command == DecisionCommands.List:
             channel_name = parsed_body.get('channel_name')
+            user_id = parsed_body.get('user_id')
+            team_id = parsed_body.get('team_id')
 
-            return list_decisions(channel_name)
+            return list_decisions(channel_name, user_id=user_id, team_id=team_id)
         else:
             raise Exception('command not supported')
     except Exception as e:
@@ -133,20 +132,21 @@ def oauth_handler(event, context):
     response = access_token_from_code(oauth_code)
 
     bot_access_token = response.get('access_token')
-    access_token = response.get('authed_user').get('access_token')
+    user_access_token = response.get('authed_user').get('access_token')
     team_id = response.get('team').get('id')
     user_id = response.get('authed_user').get('id')
-    bot_user_id = response.get('bot_user_id')
 
     access_token_repo.save_token(
-        access_token=access_token, user_id=user_id, team_id=team_id)
+        type="user", access_token=user_access_token, user_id=user_id, team_id=team_id)
+    access_token_repo.save_token(
+        type="bot", access_token=bot_access_token, user_id=user_id, team_id=team_id)
 
     message = f"""
     :wave: Hello <@{user_id}>! Thanks for choosing Slack's  "Team Decisions" application. We are going to help you with making and managing decisions: Here is how you use decisions:
 
 
-    • ```/decision I made a great decision and I like to keep it```
-    • ```/decision```  This will show you all the decisions made
+     ```/decision I made a great decision and I like to keep it```
+     ```/decision```  This will show you all the decisions made
     """
 
     response = post_message(channel_id=user_id,
