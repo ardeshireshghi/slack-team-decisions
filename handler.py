@@ -4,6 +4,7 @@ from urllib.parse import parse_qs
 from decisions_app.interface_adapters.presenters.slack_decisions_presenter import SlackDecisionMessagesPresenter
 from decisions_app.frameworks.slack_api import access_token_from_code, post_message, search as search_slack
 from decisions_app.frameworks.database.access_token_repo import AccessTokenRepository
+from decisions_app.frameworks.ui.joined_page import get_join_app_html
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,38 +19,6 @@ access_token_repo = AccessTokenRepository()
 class DecisionCommands:
     List = 'list'
     Create = 'create'
-
-
-def get_join_app_html():
-    return """
-            <DOCTYPE html>
-            <html>
-                <head>
-                    <title>Slack decisions app</title>
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <meta charset="UTF-8">
-                    <style>
-                        body {
-                            padding: 0;
-                            margin: 0;
-                            font-family: sans-serif;
-                        }
-
-                        .page {
-                            height: 100vh;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="page">
-                        <h1>👍 Thanks for choosing "Team decisions" on Slack</h1>
-                    </div>
-                </body>
-            </html>
-        """
 
 
 def parse_body(raw_body):
