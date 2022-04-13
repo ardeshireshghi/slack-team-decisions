@@ -96,12 +96,12 @@ functions:
     #    Check the event documentation for details
     events:
       - httpApi:
-          path: /page/{pageName?}
+          path: /page/{pageName}
           method: get
           request:
-          parameters:
-            paths:
-              pageName: true
+            parameters:
+              paths:
+                pageName: false
 
     #      - websocket: $connect
     #      - s3: ${env:BUCKET}
