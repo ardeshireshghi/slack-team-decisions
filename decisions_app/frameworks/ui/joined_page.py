@@ -18,6 +18,7 @@ def get_join_app_html(user_name):
                             display: flex;
                             align-items: center;
                             justify-content: center;
+                            text-align: center;
                         }}
                     </style>
                 </head>

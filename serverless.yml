@@ -89,6 +89,19 @@ functions:
       - httpApi:
           path: /api/v1/oauth_callback
           method: get
+  page_handler:
+    handler: handler.page_handler
+    #    The following are a few example events you can configure
+    #    NOTE: Please make sure to change your handler code to work with those events
+    #    Check the event documentation for details
+    events:
+      - httpApi:
+          path: /page/{pageName?}
+          method: get
+          request:
+          parameters:
+            paths:
+              pageName: true
 
     #      - websocket: $connect
     #      - s3: ${env:BUCKET}

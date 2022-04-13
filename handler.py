@@ -8,6 +8,9 @@ from decisions_app.interface_adapters.presenters.slack_decisions_presenter impor
 from decisions_app.frameworks.slack_api import access_token_from_code, post_message, get_user_by_id, search as search_slack
 from decisions_app.frameworks.database.access_token_repo import AccessTokenRepository
 from decisions_app.frameworks.ui.joined_page import get_join_app_html
+from decisions_app.frameworks.ui.landing_page import get_landing_page_html
+from decisions_app.frameworks.ui.privacy_page import get_privacy_page_html
+from decisions_app.frameworks.ui.not_found import get_404_page_html
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -166,3 +169,25 @@ def oauth_handler(event, context):
         },
         "body": get_join_app_html(user_name)
     }
+
+
+def page_handler(event, context):
+    path_parameters = event.get('pathParameters')
+    page_name = 'landing' if not path_parameters else path_parameters.get(
+        'pageName')
+    response = {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "text/html",
+        }
+    }
+
+    if page_name == 'landing':
+        response["body"] = get_landing_page_html()
+    elif page_name == 'privacy':
+        response["body"] = get_privacy_page_html()
+    else:
+        response["body"] = get_404_page_html()
+        response["statusCode"] = 404
+
+    return response
